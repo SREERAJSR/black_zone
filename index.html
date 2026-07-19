@@ -333,7 +333,6 @@ body.ready .hero-visual{transition:opacity 1.1s ease .35s,transform 1.15s var(--
 .hero-cta{animation:heroRise .85s var(--ease) .7s both}
 .hero-cta .btn{transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
 .hero-cta .btn:hover{transform:translateY(-4px) scale(1.02)}
-.hero-logo{animation:floatY 5.5s ease-in-out infinite}
 .marquee-track .star{animation:starTwinkle 2.4s ease-in-out infinite}
 .marquee-track .star:nth-child(3n){animation-delay:.4s}
 .marquee-track .star:nth-child(5n){animation-delay:.9s}
@@ -1022,41 +1021,22 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
     });
   }
 
-  /* ---- Hero parallax on embers + glow + pointer drift ---- */
+  /* ---- Hero parallax on glow only ---- */
   var glow = document.querySelector('.hero-glow');
-  var heroLogo = document.querySelector('.hero-logo');
-  var heroVisual = document.querySelector('.hero-visual');
   var pTick = false;
-  var ptrX = 0, ptrY = 0;
   if(!reduce){
     window.addEventListener('scroll', function(){
       if(!pTick){
         requestAnimationFrame(function(){
           var y = window.scrollY;
-          if(y < window.innerHeight){
-            if(glow) glow.style.transform = 'translateY('+(y*0.25)+'px)';
-            if(heroLogo) heroLogo.style.transform = 'translateY('+(y*0.12)+'px) scale('+(1 - y*0.00012)+') translate('+(ptrX*12)+'px,'+(ptrY*10)+'px)';
+          if(y < window.innerHeight && glow){
+            glow.style.transform = 'translateY('+(y*0.25)+'px)';
           }
           pTick = false;
         });
         pTick = true;
       }
     }, {passive:true});
-
-    if(heroVisual && window.matchMedia('(hover:hover)').matches){
-      heroVisual.addEventListener('mousemove', function(ev){
-        var r = heroVisual.getBoundingClientRect();
-        ptrX = ((ev.clientX - r.left) / r.width - 0.5);
-        ptrY = ((ev.clientY - r.top) / r.height - 0.5);
-        if(heroLogo){
-          heroLogo.style.transform = 'translate('+(ptrX*18)+'px,'+(ptrY*14)+'px)';
-        }
-      });
-      heroVisual.addEventListener('mouseleave', function(){
-        ptrX = 0; ptrY = 0;
-        if(heroLogo) heroLogo.style.transform = '';
-      });
-    }
   }
 
   /* ---- Contact form → email ---- */
