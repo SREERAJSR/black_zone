@@ -235,29 +235,24 @@ section{position:relative;z-index:2}
   overflow:visible;
 }
 .hero-visual::before{
-  content:"";position:absolute;width:90%;height:90%;border-radius:50%;
-  background:radial-gradient(circle,rgba(242,201,76,.3),rgba(212,165,55,.1) 40%,transparent 70%);
-  filter:blur(40px);z-index:0;animation:logoAura 3.6s ease-in-out infinite;
+  content:"";position:absolute;width:78%;height:78%;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,165,55,.14),transparent 68%);
+  filter:blur(36px);z-index:0;animation:logoAura 3.6s ease-in-out infinite;
   pointer-events:none;
 }
 .hero-visual::after{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
   background:
-    radial-gradient(ellipse 58% 58% at 50% 46%, transparent 18%, rgba(10,10,10,.35) 48%, rgba(10,10,10,.88) 72%, #0A0A0A 92%),
-    linear-gradient(90deg, #0A0A0A 0%, transparent 22%, transparent 78%, #0A0A0A 100%),
-    linear-gradient(180deg, #0A0A0A 0%, transparent 18%, transparent 82%, #0A0A0A 100%);
+    radial-gradient(ellipse 78% 78% at 50% 46%, transparent 55%, rgba(10,10,10,.55) 78%, #0A0A0A 100%);
 }
 .hero-logo{
-  position:relative;z-index:1;width:min(108%,620px);height:auto;max-width:none;
-  mix-blend-mode:lighten;
-  filter:contrast(1.05) saturate(1.05) drop-shadow(0 0 50px rgba(212,165,55,.2));
+  position:relative;z-index:1;width:min(100%,560px);height:auto;
+  filter:none;
   will-change:transform;
-  -webkit-mask-image:
-    radial-gradient(ellipse 68% 66% at 50% 45%,#000 22%,rgba(0,0,0,.85) 42%,rgba(0,0,0,.35) 58%,transparent 72%);
-  mask-image:
-    radial-gradient(ellipse 68% 66% at 50% 45%,#000 22%,rgba(0,0,0,.85) 42%,rgba(0,0,0,.35) 58%,transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse 86% 86% at 50% 48%,#000 62%,rgba(0,0,0,.7) 78%,transparent 96%);
+  mask-image:radial-gradient(ellipse 86% 86% at 50% 48%,#000 62%,rgba(0,0,0,.7) 78%,transparent 96%);
 }
-@keyframes logoAura{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes logoAura{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.85;transform:scale(1.05)}}
 .hero-scroll{
   position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:3;
   font-family:'Oswald';text-transform:uppercase;letter-spacing:.3em;font-size:.6rem;color:var(--muted);
