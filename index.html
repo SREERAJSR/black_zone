@@ -517,12 +517,35 @@ body.ready .hero-visual{transition:opacity 1.1s ease .35s,transform 1.15s var(--
   border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   overflow:hidden;
 }
-.transform-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;align-items:stretch;
+.transforms-head{
+  display:flex;flex-wrap:wrap;gap:1.2rem;align-items:flex-end;justify-content:space-between;
+  margin-bottom:2.2rem;
 }
+.transforms-head .head{margin-bottom:0}
+.transform-controls{display:flex;align-items:center;gap:.7rem}
+.transform-hint{
+  font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.66rem;color:var(--muted);
+  margin-right:.4rem;
+}
+.transform-nav{
+  width:44px;height:44px;display:grid;place-items:center;cursor:pointer;
+  border:1px solid var(--line);background:rgba(10,10,10,.7);color:var(--gold);
+  transition:background .3s,border-color .3s,color .3s,transform .3s;
+}
+.transform-nav:hover{background:var(--gold);color:#0A0A0A;border-color:var(--gold);transform:translateY(-2px)}
+.transform-nav:disabled{opacity:.35;cursor:default;transform:none}
+.transform-scroller{
+  display:flex;gap:1.2rem;overflow-x:auto;scroll-snap-type:x mandatory;
+  scroll-padding-inline:clamp(1.2rem,5vw,4rem);
+  padding:0 0 1.2rem;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--gold-deep) transparent;
+}
+.transform-scroller::-webkit-scrollbar{height:4px}
+.transform-scroller::-webkit-scrollbar-thumb{background:var(--gold-deep)}
 .transform-card{
   position:relative;margin:0;border:1px solid var(--line);
-  background:#0A0A0A;overflow:hidden;
+  background:#0A0A0A;overflow:hidden;flex:0 0 min(78vw,380px);
+  scroll-snap-align:start;
   clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
   transition:border-color .45s,box-shadow .45s,transform .45s var(--ease);
 }
@@ -576,7 +599,8 @@ body.ready .hero-visual{transition:opacity 1.1s ease .35s,transform 1.15s var(--
 }
 .transform-card .note em{font-style:normal;color:var(--gold-bright)}
 @media (max-width:960px){
-  .transform-grid{grid-template-columns:1fr;max-width:520px;margin:0 auto}
+  .transform-card{flex-basis:min(86vw,340px)}
+  .transform-hint{display:none}
 }
 
 /* ---------- Map / Find us ---------- */
@@ -1013,15 +1037,26 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
 <!-- Transformations -->
 <section class="transforms section-pad" id="transforms">
   <div class="wrap">
-    <div class="head">
-      <span class="round reveal">02</span>
-      <span class="eyebrow reveal">Real Results</span>
-      <h2 class="reveal reveal-d1">Transformations<br>Built Here.</h2>
-      <p class="reveal reveal-d2">Proof from the floor — months of discipline, sweat, and Blackzone coaching.</p>
+    <div class="transforms-head">
+      <div class="head">
+        <span class="round reveal">02</span>
+        <span class="eyebrow reveal">Real Results</span>
+        <h2 class="reveal reveal-d1">Transformations<br>Built Here.</h2>
+        <p class="reveal reveal-d2">Proof from the floor — swipe to see more Blackzone results.</p>
+      </div>
+      <div class="transform-controls reveal reveal-d2">
+        <span class="transform-hint">Scroll for more</span>
+        <button type="button" class="transform-nav" id="transformPrev" aria-label="Previous transformation">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="transform-nav" id="transformNext" aria-label="Next transformation">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
     </div>
 
-    <div class="transform-grid">
-      <figure class="transform-card reveal">
+    <div class="transform-scroller" id="transformScroller">
+      <figure class="transform-card">
         <div class="transform-media">
           <img src="assets/progress/transform-01.jpg" alt="Blackzone 3 month before and after transformation" width="941" height="773" loading="lazy" />
           <div class="transform-glow" aria-hidden="true"></div>
@@ -1032,7 +1067,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         </figcaption>
       </figure>
 
-      <figure class="transform-card reveal reveal-d1">
+      <figure class="transform-card">
         <div class="transform-media">
           <img src="assets/progress/transform-02.jpg" alt="Blackzone 4 month before and after transformation" width="900" height="900" loading="lazy" />
           <div class="transform-glow" aria-hidden="true"></div>
@@ -1043,7 +1078,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         </figcaption>
       </figure>
 
-      <figure class="transform-card reveal reveal-d2">
+      <figure class="transform-card">
         <div class="transform-media">
           <img src="assets/progress/transform-03.jpg" alt="Blackzone 40 days transformation — Mr. Rinto" width="1254" height="1254" loading="lazy" />
           <div class="transform-glow" aria-hidden="true"></div>
@@ -1054,7 +1089,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         </figcaption>
       </figure>
 
-      <figure class="transform-card reveal reveal-d3">
+      <figure class="transform-card">
         <div class="transform-media">
           <img src="assets/progress/transform-04.jpg" alt="Blackzone 10 days transformation — Renji Joy" width="1254" height="1254" loading="lazy" />
           <div class="transform-glow" aria-hidden="true"></div>
@@ -1062,6 +1097,28 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         <figcaption>
           <span class="badge">10 Days · Renji Joy</span>
           <span class="note">Before → After · <em>BCF</em></span>
+        </figcaption>
+      </figure>
+
+      <figure class="transform-card">
+        <div class="transform-media">
+          <img src="assets/progress/transform-05.jpg" alt="Blackzone 15 days transformation — Mr. Lejeesh" width="1162" height="1176" loading="lazy" />
+          <div class="transform-glow" aria-hidden="true"></div>
+        </div>
+        <figcaption>
+          <span class="badge">15 Days · Lejeesh</span>
+          <span class="note">Before → After · <em>BCF</em></span>
+        </figcaption>
+      </figure>
+
+      <figure class="transform-card">
+        <div class="transform-media">
+          <img src="assets/progress/transform-06.jpg" alt="Blackzone posture correction — Krishnapriya" width="1254" height="1254" loading="lazy" />
+          <div class="transform-glow" aria-hidden="true"></div>
+        </div>
+        <figcaption>
+          <span class="badge">Posture · Krishnapriya</span>
+          <span class="note">Day 1 Change · <em>BCF</em></span>
         </figcaption>
       </figure>
     </div>
@@ -1442,6 +1499,31 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         pTick = true;
       }
     }, {passive:true});
+  }
+
+  /* ---- Transformations scroller ---- */
+  var tScroll = document.getElementById('transformScroller');
+  var tPrev = document.getElementById('transformPrev');
+  var tNext = document.getElementById('transformNext');
+  if(tScroll && tPrev && tNext){
+    function tStep(){
+      var card = tScroll.querySelector('.transform-card');
+      return card ? card.getBoundingClientRect().width + 18 : 320;
+    }
+    function syncTNav(){
+      var max = tScroll.scrollWidth - tScroll.clientWidth - 4;
+      tPrev.disabled = tScroll.scrollLeft <= 4;
+      tNext.disabled = tScroll.scrollLeft >= max;
+    }
+    tPrev.addEventListener('click', function(){
+      tScroll.scrollBy({ left: -tStep(), behavior: reduce ? 'auto' : 'smooth' });
+    });
+    tNext.addEventListener('click', function(){
+      tScroll.scrollBy({ left: tStep(), behavior: reduce ? 'auto' : 'smooth' });
+    });
+    tScroll.addEventListener('scroll', syncTNav, {passive:true});
+    window.addEventListener('resize', syncTNav);
+    syncTNav();
   }
 
   /* ---- Contact form → email ---- */
