@@ -60,6 +60,9 @@ body{
   cursor:default;
 }
 body.locked{overflow:hidden}
+/* If JS stalls, unlock scroll automatically */
+body.locked{animation:unlockBody 0s linear 2.8s forwards}
+@keyframes unlockBody{to{overflow:auto}}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 ::selection{background:var(--gold);color:#000}
@@ -109,13 +112,15 @@ a{color:inherit;text-decoration:none}
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.4rem;
   transition:opacity .7s var(--ease),visibility .7s;
   overflow:hidden;
+  animation:loaderAutoHide .6s var(--ease) 2.2s forwards;
 }
+@keyframes loaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
 .loader::before{
   content:"";position:absolute;width:min(70vw,520px);height:min(70vw,520px);border-radius:50%;
   background:radial-gradient(circle,rgba(212,165,55,.28),transparent 68%);
   filter:blur(40px);animation:loaderPulse 2.2s ease-in-out infinite;
 }
-.loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.loader.done{opacity:0;visibility:hidden;pointer-events:none;animation:none}
 .loader-logo-wrap{position:relative;z-index:1;display:grid;place-items:center}
 .loader-logo-wrap::after{
   content:"";position:absolute;inset:-8%;border-radius:50%;
@@ -220,13 +225,13 @@ section{position:relative;z-index:2}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,165,55,.6)}70%{box-shadow:0 0 0 9px rgba(212,165,55,0)}100%{box-shadow:0 0 0 0 rgba(212,165,55,0)}}
 .hero h1{font-family:'Anton';font-size:clamp(2.6rem,7.5vw,6.8rem);line-height:.88;letter-spacing:.005em;margin-bottom:1.4rem}
 .hero h1 .line{display:block;overflow:hidden}
-.hero h1 .line > span{display:inline-block;transform:translateY(112%) skewX(-8deg);will-change:transform}
+.hero h1 .line > span{display:inline-block;transform:translateY(0) skewX(-8deg);will-change:transform}
 .hero h1 .outline{-webkit-text-stroke:1.5px var(--gold);color:transparent}
-.hero-sub{max-width:480px;color:#cabfa9;font-size:1.06rem;margin-bottom:2.4rem;opacity:0;transform:translateY(20px)}
-.hero-cta{display:flex;flex-wrap:wrap;gap:1rem;opacity:0;transform:translateY(20px)}
+.hero-sub{max-width:480px;color:#cabfa9;font-size:1.06rem;margin-bottom:2.4rem;opacity:1;transform:none}
+.hero-cta{display:flex;flex-wrap:wrap;gap:1rem;opacity:1;transform:none}
 .hero-visual{
   position:relative;display:flex;align-items:center;justify-content:center;
-  min-height:min(72vh,620px);opacity:0;transform:translateX(36px) scale(.94);
+  min-height:min(72vh,620px);opacity:1;transform:none;
   isolation:isolate;
 }
 .hero-visual::before{
@@ -459,7 +464,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
 }
 </style>
 </head>
-<body class="locked">
+<body>
 
 <!-- Preloader -->
 <div class="loader" id="loader">
