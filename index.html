@@ -448,6 +448,126 @@ body.ready .hero-visual{transition:opacity 1.1s ease .35s,transform 1.15s var(--
 .why h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-weight:600;font-size:1.05rem;margin-bottom:.5rem}
 .why p{color:var(--muted);font-size:.9rem}
 
+/* ---------- Google Reviews ---------- */
+.reviews{
+  background:
+    radial-gradient(70% 60% at 10% 0%, rgba(212,165,55,.07), transparent 55%),
+    linear-gradient(180deg,#0A0A0A,#0c0a06,#0A0A0A);
+  border-top:1px solid var(--line);
+}
+.reviews-top{
+  display:flex;flex-wrap:wrap;gap:1.6rem;align-items:flex-end;justify-content:space-between;
+  margin-bottom:2.6rem;
+}
+.g-score{
+  display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+  padding:1.1rem 1.35rem;border:1px solid var(--line);
+  background:linear-gradient(160deg,#141109,#0b0906);
+}
+.g-score .big{
+  font-family:'Anton';font-size:3rem;line-height:1;color:var(--gold);
+}
+.g-score .meta{display:flex;flex-direction:column;gap:.25rem}
+.g-score .stars{color:var(--gold-bright);letter-spacing:.12em;font-size:1.05rem}
+.g-score .label{
+  font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:.66rem;color:var(--muted);
+}
+.review-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;
+}
+.review{
+  border:1px solid var(--line);
+  background:linear-gradient(160deg,var(--panel),#0c0a06);
+  padding:1.8rem 1.6rem;
+  display:flex;flex-direction:column;gap:1rem;
+  transition:transform .4s var(--ease),border-color .4s,box-shadow .4s;
+  min-height:100%;
+}
+.review:hover{
+  transform:translateY(-6px);
+  border-color:rgba(212,165,55,.4);
+  box-shadow:0 24px 50px -30px rgba(0,0,0,.9);
+}
+.review .stars{color:var(--gold-bright);letter-spacing:.1em;font-size:.95rem}
+.review blockquote{
+  margin:0;color:#d8cfbb;font-size:.98rem;line-height:1.55;flex:1;
+}
+.review blockquote::before{content:"“";color:var(--gold);font-family:'Anton';font-size:1.6rem;line-height:0;margin-right:.15rem}
+.review .who{
+  display:flex;align-items:center;gap:.75rem;padding-top:.4rem;border-top:1px solid var(--line);
+}
+.review .avatar{
+  width:36px;height:36px;flex:none;border-radius:50%;
+  display:grid;place-items:center;
+  background:rgba(212,165,55,.12);border:1px solid var(--line);
+  font-family:'Oswald';font-weight:600;color:var(--gold);font-size:.85rem;
+}
+.review .name{font-family:'Oswald';font-weight:600;letter-spacing:.04em}
+.review .src{display:block;font-size:.72rem;color:var(--muted);margin-top:.15rem}
+.reviews-cta{margin-top:2.2rem;display:flex;justify-content:center}
+@media (max-width:960px){
+  .review-grid{grid-template-columns:1fr}
+}
+
+/* ---------- Map / Find us ---------- */
+.map-band{
+  background:
+    radial-gradient(80% 70% at 90% 20%, rgba(212,165,55,.08), transparent 50%),
+    linear-gradient(180deg,#0A0A0A,#0d0b06,#0A0A0A);
+  border-top:1px solid var(--line);
+}
+.map-layout{
+  display:grid;grid-template-columns:1.4fr .9fr;gap:1.6rem;align-items:stretch;
+}
+.map-frame{
+  position:relative;border:1px solid var(--line);
+  background:#0A0A0A;min-height:420px;overflow:hidden;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
+}
+.map-frame::before,.map-frame::after{
+  content:"";position:absolute;z-index:3;pointer-events:none;
+  width:28px;height:28px;border-color:var(--gold);border-style:solid;
+}
+.map-frame::before{top:10px;left:10px;border-width:2px 0 0 2px}
+.map-frame::after{right:10px;bottom:10px;border-width:0 2px 2px 0}
+.map-frame iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0;
+  filter:grayscale(.35) contrast(1.05) brightness(.88) saturate(.85);
+  transition:filter .5s var(--ease);
+}
+.map-frame:hover iframe{filter:grayscale(.15) contrast(1.05) brightness(.92) saturate(1)}
+.map-veil{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(10,10,10,.55) 0%, transparent 18%, transparent 82%, rgba(10,10,10,.45) 100%),
+    linear-gradient(180deg, rgba(10,10,10,.4) 0%, transparent 20%, transparent 80%, rgba(10,10,10,.55) 100%),
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(10,10,10,.35) 100%);
+  mix-blend-mode:multiply;
+}
+.map-card{
+  border:1px solid var(--line);
+  background:linear-gradient(160deg,var(--panel),#0c0a06);
+  padding:2rem 1.7rem;
+  display:flex;flex-direction:column;gap:1.2rem;
+}
+.map-card .k{
+  font-family:'Oswald';text-transform:uppercase;letter-spacing:.18em;font-size:.68rem;color:var(--gold);
+}
+.map-card h3{
+  font-family:'Anton';font-size:clamp(1.6rem,3vw,2.1rem);line-height:1;text-transform:uppercase;
+}
+.map-card p{color:#b3aa97;font-size:.95rem;line-height:1.55}
+.map-card .pin{
+  width:46px;height:46px;display:grid;place-items:center;color:var(--gold);
+  border:1px solid var(--line);
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+}
+.map-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:auto}
+@media (max-width:960px){
+  .map-layout{grid-template-columns:1fr}
+  .map-frame{min-height:320px}
+}
+
 /* ---------- CTA band ---------- */
 .cta-band{position:relative;overflow:hidden;text-align:center;
   background:linear-gradient(120deg,#120f08 0%,#1c1608 50%,#120f08 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -632,7 +752,8 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
     <ul class="nav-links">
       <li><a href="#programs" data-link>Programs</a></li>
       <li><a href="#why" data-link>Why BCF</a></li>
-      <li><a href="#journey" data-link>Journey</a></li>
+      <li><a href="#reviews" data-link>Reviews</a></li>
+      <li><a href="#find-us" data-link>Find Us</a></li>
       <li><a href="#contact" data-link>Contact</a></li>
     </ul>
     <a href="#contact" class="nav-cta desktop" data-link>Join Now</a>
@@ -856,6 +977,105 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
   </div>
 </section>
 
+<!-- Google Reviews -->
+<section class="reviews section-pad" id="reviews">
+  <div class="wrap">
+    <div class="reviews-top">
+      <div class="head" style="margin-bottom:0">
+        <span class="round reveal">03</span>
+        <span class="eyebrow reveal">Google Reviews</span>
+        <h2 class="reveal reveal-d1">Trusted By Real<br>Members.</h2>
+        <p class="reveal reveal-d2">What people say about Blackzone on Google.</p>
+      </div>
+      <div class="g-score reveal reveal-d2">
+        <div class="big">5.0</div>
+        <div class="meta">
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <div class="label">Google rating · Pathanamthitta</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-grid">
+      <article class="review reveal">
+        <div class="stars" aria-label="5 stars">★★★★★</div>
+        <blockquote>An amazing place to train, whether you’re a beginner or serious about combat sports. The coaches Salih and Jerry are highly skilled, supportive, and push you to improve. Training sessions are intense, well-structured, and include Boxing, Kickboxing, Muay Thai and even Kalaripayattu. The atmosphere is motivating, equipment is good, and the members are friendly — it truly feels like a team. No, it feels like a family. I’ve already noticed major improvements in my strength, stamina, and confidence. If you want real results and disciplined training, this is the place to be. Highly recommended for anyone serious about fitness or martial arts.</blockquote>
+        <div class="who">
+          <div class="avatar">S</div>
+          <div>
+            <div class="name">Sreejith S</div>
+            <span class="src">Posted on Google</span>
+          </div>
+        </div>
+      </article>
+      <article class="review reveal reveal-d1">
+        <div class="stars" aria-label="5 stars">★★★★★</div>
+        <blockquote>The ambience is intense and motivating, perfect for pushing your limits. The hospitality is top-notch — the staff are super welcoming. What really stands out is their trainee-centred approach; they focus on individual progress. The batch-wise division ensures you get proper attention, and the unisex training is a big plus. Plus, the trainers are professionals who know their stuff. Whether you're a pro or a newbie, they'll push you to be your best.</blockquote>
+        <div class="who">
+          <div class="avatar">R</div>
+          <div>
+            <div class="name">Rinto Varghese</div>
+            <span class="src">Posted on Google</span>
+          </div>
+        </div>
+      </article>
+      <article class="review reveal reveal-d2">
+        <div class="stars" aria-label="5 stars">★★★★★</div>
+        <blockquote>I joined Black Zone Boxing Club 14 days ago, and I have already noticed significant changes in both my body and mental health. The atmosphere at Black Zone is very comfortable, motivating, and welcoming. A special thanks to trainer Salih, who constantly encourages me to push beyond my limits and never give up on challenges. His guidance, support, and positive attitude have helped me achieve great results in a short period of time. I am truly happy that I joined Black Zone. If you want to improve your fitness, build confidence, and experience positive changes in your life, I highly recommend this club. Join Black Zone and feel the difference!</blockquote>
+        <div class="who">
+          <div class="avatar">S</div>
+          <div>
+            <div class="name">Soman Soby</div>
+            <span class="src">Posted on Google</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="reviews-cta reveal">
+      <a class="btn btn-ghost" href="https://www.google.com/maps?cid=409685625434768574" target="_blank" rel="noopener noreferrer"><span>Read All Reviews On Google</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- Find Us / Map -->
+<section class="map-band section-pad" id="find-us">
+  <div class="wrap">
+    <div class="head">
+      <span class="round reveal">04</span>
+      <span class="eyebrow reveal">Find Us</span>
+      <h2 class="reveal reveal-d1">Train At The<br>Blackzone.</h2>
+      <p class="reveal reveal-d2">3rd Floor, Vellatharayil Building — Chittar, Pathanamthitta.</p>
+    </div>
+
+    <div class="map-layout">
+      <div class="map-frame reveal">
+        <div class="map-veil" aria-hidden="true"></div>
+        <iframe
+          title="Blackzone Combat And Fitness on Google Maps"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+          src="https://maps.google.com/maps?cid=409685625434768574&amp;hl=en&amp;z=16&amp;output=embed">
+        </iframe>
+      </div>
+
+      <aside class="map-card reveal reveal-d1">
+        <div class="pin" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="k">Blackzone Combat And Fitness</div>
+        <h3>Chittar, Pathanamthitta</h3>
+        <p>3rd Floor, Vellatharayil Building, Old Stand, Chittar – Pulayanpara Rd, near Vellatharayil HP Petrol pump, opposite Dragon Restaurant, Chittar, Kerala 689663.</p>
+        <div class="map-actions">
+          <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=Blackzone+Combat+And+Fitness+Chittar,+Vellatharayil+Building,+Chittar,+Kerala+689663" target="_blank" rel="noopener noreferrer"><span>Get Directions</span></a>
+          <a class="btn btn-ghost" href="https://www.google.com/maps?cid=409685625434768574" target="_blank" rel="noopener noreferrer"><span>Open In Maps</span></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
 <!-- CTA band -->
 <section class="cta-band section-pad" id="journey">
   <div class="wrap">
@@ -892,7 +1112,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         </div>
         <div class="info-row">
           <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-          <div><div class="k">Location</div><div class="v">Blackzone Combat &amp; Fitness, Pathanamthitta</div></div>
+          <div><div class="k">Location</div><div class="v">3rd Floor, Vellatharayil Building, Chittar, Kerala 689663</div></div>
         </div>
         <div class="info-row">
           <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
