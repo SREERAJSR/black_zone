@@ -1470,16 +1470,32 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 
       function logoOrigin(){
         if(!logoEl) logoEl = document.querySelector('.hero-logo');
-        if(!logoEl) return { x: W * 0.72, y: H * 0.45, visible: false };
+        if(!logoEl){
+          return {
+            x: W * 0.72, y: H * 0.4, visible: false,
+            left: { x: W * 0.62, y: H * 0.38 },
+            right: { x: W * 0.82, y: H * 0.38 },
+            rw: 120, rh: 120
+          };
+        }
         var r = logoEl.getBoundingClientRect();
         var visible = r.bottom > 80 && r.top < H * 0.72 && r.width > 0 && r.height > 40;
-        // Only treat as "hero mode" when a meaningful part of the logo is on screen
         var onScreen = Math.min(r.bottom, H) - Math.max(r.top, 0);
         visible = visible && onScreen > r.height * 0.35;
+        /* Figure zone in the artwork: front fighter + hooded man behind.
+           Sparks in the photo sit on their left/right shoulders — not the text below. */
+        var cx = r.left + r.width * 0.5;
+        var cy = r.top + r.height * 0.32;
+        var sideX = r.width * 0.28;
+        var sideY = r.height * 0.04;
         return {
-          x: r.left + r.width * 0.5,
-          y: r.top + r.height * 0.38,
-          visible: visible
+          x: cx,
+          y: cy,
+          visible: visible,
+          left:  { x: cx - sideX, y: cy + sideY * 0.5 },
+          right: { x: cx + sideX, y: cy + sideY * 0.5 },
+          rw: r.width,
+          rh: r.height
         };
       }
 
@@ -1500,16 +1516,16 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
       function mkFromEdge(){
         var edge = (Math.random() * 4) | 0;
         var x, y, vx, vy;
-        if(edge === 0){ // bottom
+        if(edge === 0){
           x = Math.random() * W; y = H + 6;
           vx = (Math.random() - 0.5) * 0.7; vy = -0.35 - Math.random() * 1.1;
-        } else if(edge === 1){ // left
+        } else if(edge === 1){
           x = -6; y = Math.random() * H;
           vx = 0.25 + Math.random() * 1.0; vy = (Math.random() - 0.5) * 0.65;
-        } else if(edge === 2){ // right
+        } else if(edge === 2){
           x = W + 6; y = Math.random() * H;
           vx = -(0.25 + Math.random() * 1.0); vy = (Math.random() - 0.5) * 0.65;
-        } else { // top
+        } else {
           x = Math.random() * W; y = -6;
           vx = (Math.random() - 0.5) * 0.7; vy = 0.2 + Math.random() * 0.55;
         }
@@ -1528,18 +1544,33 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 
       function mkFromLogo(spread){
         var o = logoOrigin();
-        var ang = Math.random() * Math.PI * 2;
-        var dist = spread ? Math.random() * Math.min(W, H) * 0.28 : (8 + Math.random() * 28);
-        var speed = 0.35 + Math.random() * 1.8;
-        var glitter = Math.random() < 0.42;
+        /* Bias to left/right of the figures — same place the photo’s gold sparks are */
+        var side = Math.random() < 0.5 ? o.left : o.right;
+        var outward = side === o.left ? -1 : 1;
+        var jitter = (Math.random() - 0.5) * o.rw * 0.08;
+        var ang;
+        if(Math.random() < 0.72){
+          // fan outward from shoulders / hood edges
+          ang = outward > 0
+            ? (-0.55 + Math.random() * 1.4)
+            : (Math.PI - 0.55 + Math.random() * 1.4);
+        } else {
+          // a few from behind the hooded silhouette
+          ang = -Math.PI * 0.5 + (Math.random() - 0.5) * 1.2;
+          side = { x: o.x + jitter, y: o.y - o.rh * 0.06 };
+        }
+        var speed = spread
+          ? (0.2 + Math.random() * 1.1)
+          : (0.55 + Math.random() * 2.4);
+        var glitter = Math.random() < 0.48;
         return {
-          x: o.x + Math.cos(ang) * dist * (spread ? 1 : 0.15),
-          y: o.y + Math.sin(ang) * dist * (spread ? 1 : 0.15),
+          x: side.x + jitter + (Math.random() - 0.5) * 14,
+          y: side.y + (Math.random() - 0.5) * o.rh * 0.1,
           vx: Math.cos(ang) * speed,
-          vy: Math.sin(ang) * speed - 0.15,
-          life: 2 + Math.random() * 3.2,
+          vy: Math.sin(ang) * speed - 0.12,
+          life: 1.6 + Math.random() * 2.8,
           age: 0,
-          size: glitter ? (0.6 + Math.random() * 1.6) : (1.1 + Math.random() * 2.6),
+          size: glitter ? (0.55 + Math.random() * 1.5) : (1.1 + Math.random() * 2.8),
           color: colors[(Math.random() * colors.length) | 0],
           glitter: glitter,
           tw: Math.random() * Math.PI * 2,
@@ -1559,14 +1590,21 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
         return { x: Math.random() * W, y: H * 0.08 };
       }
 
-      function burst(cx, cy, n){
+      function burst(cx, cy, n, outwardBias){
         for(var i = 0; i < n; i++){
           if(parts.length >= maxParts + 50) break;
-          var ang = Math.random() * Math.PI * 2;
+          var ang;
+          if(outwardBias === 'left'){
+            ang = Math.PI - 0.7 + Math.random() * 1.4;
+          } else if(outwardBias === 'right'){
+            ang = -0.7 + Math.random() * 1.4;
+          } else {
+            ang = Math.random() * Math.PI * 2;
+          }
           var speed = 0.7 + Math.random() * 3.6;
           parts.push({
-            x: cx + (Math.random() - 0.5) * 24,
-            y: cy + (Math.random() - 0.5) * 24,
+            x: cx + (Math.random() - 0.5) * 20,
+            y: cy + (Math.random() - 0.5) * 20,
             vx: Math.cos(ang) * speed,
             vy: Math.sin(ang) * speed - Math.random() * 0.9,
             life: 0.75 + Math.random() * 1.2,
@@ -1588,15 +1626,16 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
         lastTs = ts;
         var o = logoOrigin();
 
-        // Hero visible → stream from logo; scrolled away → gentle side sparks only
         if(parts.length < maxParts){
-          var spawnRate = o.visible ? 0.7 : 0.4;
+          var spawnRate = o.visible ? 0.85 : 0.4;
           if(Math.random() < spawnRate * dt) parts.push(mk(false));
         }
-        if(ts - lastBurst > (o.visible ? 1400 : 2200) + Math.random() * (o.visible ? 1600 : 2400)){
+        if(ts - lastBurst > (o.visible ? 1200 : 2200) + Math.random() * (o.visible ? 1400 : 2400)){
           lastBurst = ts;
           if(o.visible){
-            burst(o.x, o.y, 22 + ((Math.random() * 28) | 0));
+            var fl = o.left, fr = o.right;
+            burst(fl.x, fl.y, 14 + ((Math.random() * 12) | 0), 'left');
+            burst(fr.x, fr.y, 14 + ((Math.random() * 12) | 0), 'right');
           } else {
             var s = sideBurstPoint();
             burst(s.x, s.y, 12 + ((Math.random() * 14) | 0));
@@ -1626,23 +1665,23 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
           var fade = k < 0.12 ? (k / 0.12) : (1 - (k - 0.12) / 0.88);
           var flick = 0.55 + 0.45 * Math.sin(p.tw * 2.2);
           var alpha = Math.max(0, fade * flick * (p.glitter ? 0.85 : 1));
-          var s = p.size * (1 - k * 0.35);
+          var sz = p.size * (1 - k * 0.35);
           ctx.beginPath();
           ctx.fillStyle = p.color;
           ctx.globalAlpha = alpha;
-          ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, sz, 0, Math.PI * 2);
           ctx.fill();
           if(!p.glitter){
             ctx.beginPath();
             ctx.fillStyle = '#FFF8E0';
             ctx.globalAlpha = alpha * 0.55;
-            ctx.arc(p.x, p.y, s * 0.4, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, sz * 0.4, 0, Math.PI * 2);
             ctx.fill();
           }
           ctx.beginPath();
           ctx.strokeStyle = p.color;
           ctx.globalAlpha = alpha * 0.45;
-          ctx.lineWidth = Math.max(0.4, s * 0.35);
+          ctx.lineWidth = Math.max(0.4, sz * 0.35);
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(p.x - p.vx * 2.4, p.y - p.vy * 2.4);
           ctx.stroke();
@@ -1653,8 +1692,10 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 
       resize();
       var o0 = logoOrigin();
-      if(o0.visible) burst(o0.x, o0.y, 70);
-      else {
+      if(o0.visible){
+        burst(o0.left.x, o0.left.y, 40, 'left');
+        burst(o0.right.x, o0.right.y, 40, 'right');
+      } else {
         var s0 = sideBurstPoint();
         burst(s0.x, s0.y, 30);
       }
@@ -1692,21 +1733,27 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
     canvas.style.height = H + 'px';
     var ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var cx = W / 2, cy = H * 0.42;
+    var cx = W / 2, cy = H * 0.30;
+    var leftX = cx - W * 0.22, rightX = cx + W * 0.22;
     var parts = [];
     var colors = ['#F2C94C', '#D4A537', '#FFE08A', '#C9A227', '#FFF3C4', '#FFD76A', '#E8B84A'];
 
-    function spawn(n, delay){
+    function spawn(n, delay, fromRight){
       for(var i = 0; i < n; i++){
-        var ang = Math.random() * Math.PI * 2;
-        var speed = 0.8 + Math.random() * 6.8;
-        var glitter = Math.random() < 0.35;
+        var side = fromRight == null ? (Math.random() < 0.5) : fromRight;
+        var ox = side ? rightX : leftX;
+        var oy = cy + (Math.random() - 0.5) * H * 0.08;
+        var ang = side
+          ? (-0.55 + Math.random() * 1.35)
+          : (Math.PI - 0.55 + Math.random() * 1.35);
+        var speed = 0.9 + Math.random() * 6.2;
+        var glitter = Math.random() < 0.4;
         parts.push({
-          x: cx + (Math.random() - 0.5) * 40,
-          y: cy + (Math.random() - 0.5) * 48,
+          x: ox + (Math.random() - 0.5) * 18,
+          y: oy,
           vx: Math.cos(ang) * speed,
-          vy: Math.sin(ang) * speed - Math.random() * 1.8,
-          life: 0.5 + Math.random() * 0.7,
+          vy: Math.sin(ang) * speed - Math.random() * 1.5,
+          life: 0.5 + Math.random() * 0.75,
           age: -delay,
           size: glitter ? (0.5 + Math.random() * 1.4) : (1.2 + Math.random() * 3.2),
           color: colors[(Math.random() * colors.length) | 0],
@@ -1714,9 +1761,11 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
         });
       }
     }
-    spawn(count, 0);
-    spawn(Math.floor(count * 0.55), 0.18);
-    spawn(Math.floor(count * 0.35), 0.38);
+    spawn(Math.floor(count * 0.45), 0, false);
+    spawn(Math.floor(count * 0.45), 0, true);
+    spawn(Math.floor(count * 0.35), 0.18, false);
+    spawn(Math.floor(count * 0.35), 0.18, true);
+    spawn(Math.floor(count * 0.2), 0.38, null);
 
     var start = null;
     function frame(ts){
