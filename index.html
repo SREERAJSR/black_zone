@@ -128,25 +128,17 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- Preloader ---------- */
 .loader{
-  position:fixed;inset:0;z-index:9999;background:var(--black);
+  position:fixed;inset:0;z-index:9999;background:#000;
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.4rem;
   transition:opacity .7s var(--ease),visibility .7s;
   overflow:hidden;
   animation:loaderAutoHide .6s var(--ease) 2.2s forwards;
 }
 @keyframes loaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
-.loader::before{
-  content:"";position:absolute;width:min(70vw,520px);height:min(70vw,520px);border-radius:50%;
-  background:radial-gradient(circle,rgba(212,165,55,.28),transparent 68%);
-  filter:blur(40px);animation:loaderPulse 2.2s ease-in-out infinite;
-}
+.loader::before{display:none;content:none}
 .loader.done{opacity:0;visibility:hidden;pointer-events:none;animation:none}
 .loader-logo-wrap{position:relative;z-index:1;display:grid;place-items:center}
-.loader-logo-wrap::after{
-  content:"";position:absolute;inset:-8%;border-radius:50%;
-  background:radial-gradient(circle,rgba(242,201,76,.22),transparent 70%);
-  filter:blur(24px);z-index:-1;animation:loaderPulse 2.2s ease-in-out infinite .4s;
-}
+.loader-logo-wrap::after{display:none;content:none}
 .spark-canvas{
   position:absolute;inset:-28%;width:156%;height:156%;
   left:50%;top:50%;transform:translate(-50%,-50%);
@@ -157,15 +149,15 @@ a{color:inherit;text-decoration:none}
   width:min(420px,82vw);display:block;
   opacity:0;transform:scale(.86);
   animation:logoIn 1.15s var(--ease) forwards;
-  filter:drop-shadow(0 0 28px rgba(212,165,55,.35)) drop-shadow(0 12px 40px rgba(0,0,0,.6));
+  filter:drop-shadow(0 12px 36px rgba(0,0,0,.75));
   -webkit-mask-image:none;
   mask-image:none;
 }
 @keyframes logoIn{to{opacity:1;transform:scale(1)}}
 @keyframes loaderPulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
-.loader-bar{width:min(240px,60vw);height:2px;background:rgba(212,165,55,.16);overflow:hidden;position:relative;z-index:1}
-.loader-bar i{position:absolute;inset:0;background:linear-gradient(90deg,var(--gold),var(--gold-bright));transform-origin:left;transform:scaleX(0);animation:loadBar 1.25s var(--ease) forwards .25s}
-.loader-tag{font-family:'Oswald';text-transform:uppercase;letter-spacing:.4em;font-size:.62rem;color:var(--muted);opacity:0;animation:fadeIn .6s ease forwards .5s;z-index:1}
+.loader-bar{width:min(240px,60vw);height:2px;background:rgba(255,255,255,.12);overflow:hidden;position:relative;z-index:1}
+.loader-bar i{position:absolute;inset:0;background:linear-gradient(90deg,#8a8a8a,#e8e8e8);transform-origin:left;transform:scaleX(0);animation:loadBar 1.25s var(--ease) forwards .25s}
+.loader-tag{font-family:'Oswald';text-transform:uppercase;letter-spacing:.4em;font-size:.62rem;color:rgba(255,255,255,.45);opacity:0;animation:fadeIn .6s ease forwards .5s;z-index:1}
 @keyframes loadBar{to{transform:scaleX(1)}}
 @keyframes fadeIn{to{opacity:1}}
 
@@ -916,7 +908,6 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 <!-- Preloader -->
 <div class="loader" id="loader">
   <div class="loader-logo-wrap">
-    <canvas class="spark-canvas" id="loaderSparks" aria-hidden="true"></canvas>
     <img class="loader-logo" src="logo.png" alt="BCF Blackzone — Combat and Fitness" />
   </div>
   <div class="loader-bar"><i></i></div>
@@ -1775,12 +1766,7 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
     requestAnimationFrame(frame);
   }
 
-  // Loader burst as soon as logo starts appearing
-  if(!reduce){
-    setTimeout(function(){
-      runSparkBurst(document.getElementById('loaderSparks'), { count: 200, duration: 2200 });
-    }, 280);
-  }
+  // Loader burst removed — keep sparks for hero / site only
 
   /* ---- Preloader ---- */
   window.addEventListener('load', function(){
