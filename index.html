@@ -544,8 +544,11 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
 .socials{display:flex;gap:.8rem}
 .socials a{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);color:var(--bone);transition:.3s var(--ease);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .socials a:hover{color:#0A0A0A;background:var(--gold);border-color:var(--gold);transform:translateY(-3px)}
-.foot-bottom{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;padding-top:1.6rem;color:var(--muted);font-size:.78rem}
+.foot-bottom{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;padding-top:1.6rem;color:var(--muted);font-size:.78rem}
 .foot-bottom .fam{color:var(--gold);font-family:'Oswald';letter-spacing:.1em;text-transform:uppercase}
+.foot-credit{font-family:'Oswald';font-size:.72rem;letter-spacing:.08em;color:var(--muted)}
+.foot-credit a{color:var(--gold);transition:color .3s}
+.foot-credit a:hover{color:var(--gold-bright)}
 
 /* ---------- Responsive ---------- */
 @media (max-width:960px){
@@ -554,13 +557,22 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
   .stat-grid{grid-template-columns:1fr 1fr}
   .contact-grid{grid-template-columns:1fr;gap:2.4rem}
   .nav-links,.nav-cta.desktop{display:none}
-  .burger{display:flex}
+  .burger{display:flex;position:relative;z-index:420}
   nav.open .nav-links{
-    display:flex;position:fixed;inset:0;top:0;background:rgba(8,8,8,.97);backdrop-filter:blur(10px);
-    flex-direction:column;align-items:center;justify-content:center;gap:2rem;z-index:150;
+    display:flex;position:fixed;inset:0;z-index:400;
+    background:#050505;
+    flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+    padding:5rem 1.5rem 2rem;
   }
-  nav.open .nav-links a{font-size:1.6rem;font-family:'Anton'}
-  .burger{position:relative;z-index:200}
+  nav.open .nav-links a{font-size:1.6rem;font-family:'Anton';position:relative;z-index:1}
+  body.menu-open{overflow:hidden}
+  body.menu-open .grain,
+  body.menu-open section,
+  body.menu-open .marquee,
+  body.menu-open footer{
+    visibility:hidden;pointer-events:none;
+  }
+  header{z-index:410}
   .hero-inner{grid-template-columns:1fr;gap:1.2rem;padding-top:6.5rem;text-align:center}
   .hero-sub{margin-left:auto;margin-right:auto}
   .hero-cta{justify-content:center}
@@ -920,6 +932,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
     </div>
     <div class="foot-bottom">
       <span>© <span id="yr"></span> Blackzone Combat &amp; Fitness Center. Train hard, fight smart.</span>
+      <span class="foot-credit">Designed by <a href="https://www.linkedin.com/in/sreeraj-sr/" target="_blank" rel="noopener noreferrer">Sreeraj SR</a></span>
       <span class="fam">More than a gym — it's a family.</span>
     </div>
   </div>
@@ -959,14 +972,18 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
   /* ---- Mobile menu ---- */
   var burger = document.getElementById('burger');
   var nav = document.getElementById('nav');
+  function setMenu(open){
+    burger.classList.toggle('open', open);
+    nav.classList.toggle('open', open);
+    document.body.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
   burger.addEventListener('click', function(){
-    burger.classList.toggle('open');
-    nav.classList.toggle('open');
+    setMenu(!nav.classList.contains('open'));
   });
   Array.prototype.forEach.call(document.querySelectorAll('[data-link]'), function(a){
     a.addEventListener('click', function(){
-      burger.classList.remove('open');
-      nav.classList.remove('open');
+      setMenu(false);
     });
   });
 
