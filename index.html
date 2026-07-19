@@ -192,6 +192,9 @@ nav{display:flex;align-items:center;gap:2.4rem}
 section{position:relative;z-index:2}
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(1.2rem,5vw,4rem)}
 .section-pad{padding:clamp(5rem,11vw,9rem) 0}
+/* Skip layout/paint work for off-screen sections until they're about to enter view —
+   keeps scroll compositing cheap on long pages instead of painting the whole DOM every frame. */
+section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 900px}
 
 /* ---------- HERO ---------- */
 .hero{
@@ -303,10 +306,6 @@ body.ready .hero-visual{transition:opacity 1.1s ease .35s,transform 1.15s var(--
   0%{background-position:200% center}
   100%{background-position:-200% center}
 }
-@keyframes borderGlow{
-  0%,100%{box-shadow:0 0 0 1px rgba(212,165,55,.28),0 0 24px rgba(212,165,55,.08)}
-  50%{box-shadow:0 0 0 1px rgba(242,201,76,.55),0 0 36px rgba(212,165,55,.22)}
-}
 @keyframes arrowPulse{
   0%,100%{transform:translateX(0);opacity:.7}
   50%{transform:translateX(6px);opacity:1}
@@ -338,7 +337,13 @@ body.ready .hero-visual{transition:opacity 1.1s ease .35s,transform 1.15s var(--
 .marquee-track .star:nth-child(5n){animation-delay:.9s}
 .intro .divider{transform-origin:center;animation:none}
 .intro .divider.in,.intro .divider.reveal.in{animation:dividerGrow .9s var(--ease) .2s both}
-.card.featured{animation:borderGlow 3.2s ease-in-out infinite}
+.card.featured{box-shadow:0 0 0 1px rgba(212,165,55,.28),0 0 24px rgba(212,165,55,.08)}
+.card.featured::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  box-shadow:0 0 0 1px rgba(242,201,76,.55),0 0 36px rgba(212,165,55,.22);
+  opacity:0;animation:borderGlowFade 3.2s ease-in-out infinite;
+}
+@keyframes borderGlowFade{0%,100%{opacity:0}50%{opacity:1}}
 .card.featured .ribbon{
   background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright),var(--gold),var(--gold-bright),var(--gold-deep));
   background-size:220% 100%;
@@ -1002,21 +1007,32 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
     requestAnimationFrame(step);
   }
 
-  /* ---- Card 3D tilt + glow ---- */
+  /* ---- Card 3D tilt + glow (rAF-throttled so it never outpaces the display) ---- */
   if(!reduce && window.matchMedia('(hover:hover)').matches){
     Array.prototype.forEach.call(document.querySelectorAll('.tilt'), function(card){
-      card.addEventListener('mousemove', function(ev){
-        var r = card.getBoundingClientRect();
-        var x = (ev.clientX - r.left) / r.width;
-        var y = (ev.clientY - r.top) / r.height;
+      var pending = null, raf = null;
+      function apply(){
+        raf = null;
+        if(!pending) return;
+        var x = pending.x, y = pending.y;
+        pending = null;
         var rx = (0.5 - y) * 7;
         var ry = (x - 0.5) * 7;
         card.style.transform = 'perspective(900px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY(-4px)';
         card.style.setProperty('--mx', (x*100)+'%');
         card.style.setProperty('--my', (y*100)+'%');
+      }
+      card.addEventListener('mouseenter', function(){ card.style.willChange = 'transform'; });
+      card.addEventListener('mousemove', function(ev){
+        var r = card.getBoundingClientRect();
+        pending = { x: (ev.clientX - r.left) / r.width, y: (ev.clientY - r.top) / r.height };
+        if(!raf) raf = requestAnimationFrame(apply);
       });
       card.addEventListener('mouseleave', function(){
+        if(raf){ cancelAnimationFrame(raf); raf = null; }
+        pending = null;
         card.style.transform = '';
+        card.style.willChange = '';
       });
     });
   }
@@ -1100,8 +1116,25 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
   /* ---- Ember particles ---- */
   if(!reduce){
     var canvas = document.getElementById('embers');
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d', { alpha: true });
     var W, H, dpr, particles = [];
+
+    /* Pre-render two glow sprites once instead of paying shadowBlur's
+       per-particle software blur on every frame (huge win at 90–120fps). */
+    function makeSprite(color){
+      var s = 24, off = document.createElement('canvas');
+      off.width = off.height = s;
+      var octx = off.getContext('2d');
+      var g = octx.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+      g.addColorStop(0, color.replace('ALPHA','1'));
+      g.addColorStop(1, color.replace('ALPHA','0'));
+      octx.fillStyle = g;
+      octx.fillRect(0,0,s,s);
+      return off;
+    }
+    var spriteNormal = makeSprite('rgba(242,201,76,ALPHA)');
+    var spriteBright = makeSprite('rgba(255,244,214,ALPHA)');
+
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       var hero = canvas.parentElement;
@@ -1125,25 +1158,28 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
         bright: Math.random() < 0.3
       };
     }
-    var raf;
-    function loop(){
+    var raf, lastTs = 0;
+    function loop(ts){
+      raf = requestAnimationFrame(loop);
+      /* Cap physics/draw to ~60fps worth of motion even on 120Hz+ displays —
+         embers don't need higher fidelity, and this halves GPU/CPU work. */
+      if(ts - lastTs < 15) return;
+      var dt = Math.min((ts - lastTs) || 16, 48) / 16.6667;
+      lastTs = ts;
       ctx.clearRect(0,0,W,H);
       for(var i=0;i<particles.length;i++){
         var p = particles[i];
-        p.y += p.vy; p.x += p.vx; p.tw += 0.03;
+        p.y += p.vy*dt; p.x += p.vx*dt; p.tw += 0.03*dt;
         var flick = p.a * (0.6 + 0.4*Math.sin(p.tw));
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fillStyle = p.bright ? 'rgba(255,244,214,'+flick+')' : 'rgba(242,201,76,'+flick+')';
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p.bright ? 'rgba(255,236,180,.6)' : 'rgba(242,201,76,.6)';
-        ctx.fill();
+        var d = p.r * 8;
+        ctx.globalAlpha = flick;
+        ctx.drawImage(p.bright ? spriteBright : spriteNormal, p.x - d/2, p.y - d/2, d, d);
         if(p.y < -10){ particles[i] = mk(false); }
       }
-      raf = requestAnimationFrame(loop);
+      ctx.globalAlpha = 1;
     }
     resize();
-    loop();
+    raf = requestAnimationFrame(loop);
     var rTimer;
     window.addEventListener('resize', function(){
       clearTimeout(rTimer); rTimer = setTimeout(resize, 200);
@@ -1152,7 +1188,7 @@ footer{background:#070707;border-top:1px solid var(--line);padding:3.4rem 0 2rem
     if('IntersectionObserver' in window){
       var hio = new IntersectionObserver(function(en){
         en.forEach(function(e){
-          if(e.isIntersecting){ if(!raf) loop(); }
+          if(e.isIntersecting){ if(!raf){ lastTs = 0; raf = requestAnimationFrame(loop); } }
           else { cancelAnimationFrame(raf); raf = null; }
         });
       }, {threshold:0});
