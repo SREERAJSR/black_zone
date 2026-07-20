@@ -218,7 +218,7 @@ body{
 }
 body.locked{overflow:hidden}
 /* If JS stalls, unlock scroll automatically */
-body.locked{animation:unlockBody 0s linear 3.6s forwards}
+body.locked{animation:unlockBody 0s linear 4.5s forwards}
 @keyframes unlockBody{to{overflow:auto}}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
@@ -284,7 +284,7 @@ body.menu-open #cursorSparks{visibility:hidden}
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.15rem;
   transition:opacity .55s var(--ease),visibility .55s;
   overflow:hidden;
-  animation:loaderAutoHide .6s var(--ease) 3.4s forwards;
+  animation:loaderAutoHide .6s var(--ease) 4.2s forwards;
 }
 @keyframes loaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
 .loader::before{display:none;content:none}
@@ -376,7 +376,7 @@ body.menu-open #cursorSparks{visibility:hidden}
 .loader-bar-seg::after{
   content:"";position:absolute;inset:0;
   transform:scaleX(0);transform-origin:left center;
-  transition:transform .55s var(--ease-butter);
+  transition:transform .7s var(--ease-butter);
 }
 .loader-bar-seg.is-white::after{
   background:#fff;
@@ -2901,7 +2901,7 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
     var barWrap = document.querySelector('.loader-bar-wrap');
     var barSegs = document.querySelectorAll('.loader-bar-seg');
     var stages = [0, 1, 2];
-    var delays = [350, 1200, 2100];
+    var delays = [500, 1600, 2800];
     function activateStage(i){
       figs.forEach(function(f){ f.classList.remove('is-peak'); });
       if(figs[i]){
@@ -2920,7 +2920,7 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
         setTimeout(function(){ activateStage(i); }, delays[i]);
       });
       var loaderSparks = document.getElementById('loaderSparks');
-      if(loaderSparks) runLoaderEdgeSparks(loaderSparks, 3200);
+      if(loaderSparks) runLoaderEdgeSparks(loaderSparks, 4200);
     } else {
       stages.forEach(function(i){ activateStage(i); });
     }
@@ -2938,7 +2938,7 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
           runSparkBurst(heroSparks, { count: 240, duration: 2600 });
         }, 200);
       }
-    }, reduce ? 100 : 2800);
+    }, reduce ? 100 : 3600);
   });
   // safety: never keep body locked
   setTimeout(function(){
@@ -2951,7 +2951,7 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
       heroSparks.dataset.burst = '1';
       runSparkBurst(heroSparks, { count: 220, duration: 2400 });
     }
-  }, 4500);
+  }, 5500);
 
   document.getElementById('yr').textContent = new Date().getFullYear();
 
