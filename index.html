@@ -63,8 +63,8 @@ body{
   body,body *{
     cursor:url("assets/cursors/dumbbell.png") 16 16, auto !important;
   }
-  a,button,.btn,.burger,.transform-nav,.nav-cta,
-  a *,button *,.btn *,.burger *,.transform-nav *,.nav-cta *,
+  a,button,.btn,.burger,.transform-nav,.nav-cta,.music-toggle,
+  a *,button *,.btn *,.burger *,.transform-nav *,.nav-cta *,.music-toggle *,
   input,select,textarea,label[for],
   [data-link],[data-link] *,
   .card a,.reviews-cta,.map-actions a,.hours-card a{
@@ -842,6 +842,72 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 .foot-credit a{color:var(--gold);transition:color .3s}
 .foot-credit a:hover{color:var(--gold-bright)}
 
+/* ---------- Music toggle ---------- */
+.music-toggle{
+  position:fixed;z-index:320;
+  right:max(1rem, env(safe-area-inset-right));
+  bottom:max(1.1rem, env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:.75rem;
+  padding:.55rem .95rem .55rem .65rem;
+  background:linear-gradient(155deg,rgba(18,18,18,.94),rgba(0,0,0,.92));
+  border:1px solid rgba(212,165,55,.32);
+  color:var(--bone);
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+  box-shadow:0 14px 40px -16px rgba(0,0,0,.85),0 0 28px -12px rgba(212,165,55,.35);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:transform .35s var(--ease),border-color .35s,box-shadow .35s,opacity .4s;
+  opacity:0;transform:translateY(14px);pointer-events:none;
+}
+body.ready .music-toggle{opacity:1;transform:none;pointer-events:auto}
+.music-toggle:hover{
+  border-color:rgba(242,201,76,.65);
+  transform:translateY(-3px);
+  box-shadow:0 18px 44px -14px rgba(0,0,0,.9),0 0 36px -10px rgba(242,201,76,.45);
+}
+.music-toggle:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
+.music-toggle.is-paused{
+  border-color:rgba(155,146,128,.35);
+  box-shadow:0 14px 40px -16px rgba(0,0,0,.85);
+}
+.music-eq{
+  width:36px;height:36px;flex:none;
+  display:flex;align-items:flex-end;justify-content:center;gap:3px;
+  padding:8px 7px;
+  border:1px solid var(--line);color:var(--gold);
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:rgba(212,165,55,.06);
+}
+.music-eq i{
+  display:block;width:2.5px;background:currentColor;border-radius:1px;
+  transform-origin:bottom;height:40%;
+  animation:eqPulse 0.9s ease-in-out infinite;
+}
+.music-eq i:nth-child(1){animation-delay:0s;height:35%}
+.music-eq i:nth-child(2){animation-delay:.15s;height:70%}
+.music-eq i:nth-child(3){animation-delay:.3s;height:50%}
+.music-eq i:nth-child(4){animation-delay:.45s;height:85%}
+@keyframes eqPulse{
+  0%,100%{transform:scaleY(.45);opacity:.55}
+  50%{transform:scaleY(1);opacity:1}
+}
+.music-toggle.is-paused .music-eq{color:var(--muted);background:rgba(255,255,255,.03)}
+.music-toggle.is-paused .music-eq i{animation:none;transform:scaleY(.35);opacity:.4}
+.music-meta{display:flex;flex-direction:column;align-items:flex-start;gap:.12rem;line-height:1.1;min-width:3.6rem}
+.music-k{
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.22em;
+  font-size:.58rem;color:var(--muted);
+}
+.music-v{
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;
+  font-size:.78rem;font-weight:600;color:var(--gold-bright);
+}
+.music-toggle.is-paused .music-v{color:var(--silver)}
+body.menu-open .music-toggle{opacity:0;pointer-events:none;visibility:hidden}
+@media (prefers-reduced-motion:reduce){
+  .music-eq i{animation:none!important;transform:scaleY(.7);opacity:.85}
+  .music-toggle,.music-toggle:hover{transition:none;transform:none}
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width:960px){
   .cards{grid-template-columns:1fr;max-width:460px;margin:0 auto}
@@ -917,6 +983,13 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 <div class="grain"></div>
 <canvas id="siteSparks" aria-hidden="true"></canvas>
 <audio id="bgMusic" src="Born%20to%20Raise%20Hell%20-%20The%20Digital%20Cowboy%20(mp3cut.net).mp3" preload="auto" loop playsinline></audio>
+<button type="button" class="music-toggle is-paused" id="musicToggle" aria-label="Play music" aria-pressed="false">
+  <span class="music-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+  <span class="music-meta">
+    <span class="music-k">Soundtrack</span>
+    <span class="music-v" id="musicLabel">Paused</span>
+  </span>
+</button>
 
 <!-- Nav -->
 <header id="header">
@@ -1818,27 +1891,81 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 
   // Loader burst removed — keep sparks for hero / site only
 
-  /* ---- Background music (autoplay + unlock on first gesture if blocked) ---- */
+  /* ---- Background music (autoplay + pause control) ---- */
   var bgMusic = document.getElementById('bgMusic');
-  function tryPlayMusic(){
-    if(!bgMusic || !bgMusic.paused) return;
+  var musicToggle = document.getElementById('musicToggle');
+  var musicLabel = document.getElementById('musicLabel');
+  var musicUserPaused = false;
+  var musicUnlockBound = false;
+
+  function setMusicUI(playing){
+    if(!musicToggle) return;
+    musicToggle.classList.toggle('is-paused', !playing);
+    musicToggle.classList.toggle('is-playing', playing);
+    musicToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    musicToggle.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
+    if(musicLabel) musicLabel.textContent = playing ? 'Playing' : 'Paused';
+  }
+
+  function clearMusicUnlock(){
+    if(!musicUnlockBound) return;
+    document.removeEventListener('pointerdown', unlockMusic);
+    document.removeEventListener('keydown', unlockMusic);
+    document.removeEventListener('touchstart', unlockMusic);
+    musicUnlockBound = false;
+  }
+
+  function unlockMusic(e){
+    if(musicUserPaused) return;
+    if(e && e.target && musicToggle && (e.target === musicToggle || musicToggle.contains(e.target))) return;
+    tryPlayMusic(true);
+  }
+
+  function bindMusicUnlock(){
+    if(musicUnlockBound || musicUserPaused) return;
+    musicUnlockBound = true;
+    document.addEventListener('pointerdown', unlockMusic);
+    document.addEventListener('keydown', unlockMusic);
+    document.addEventListener('touchstart', unlockMusic, {passive:true});
+  }
+
+  function tryPlayMusic(fromUnlock){
+    if(!bgMusic || musicUserPaused) return;
+    if(!bgMusic.paused){ setMusicUI(true); return; }
     var playPromise = bgMusic.play();
     if(playPromise && typeof playPromise.then === 'function'){
-      playPromise.catch(function(){
-        var unlock = function(){
-          bgMusic.play().catch(function(){});
-          document.removeEventListener('pointerdown', unlock);
-          document.removeEventListener('keydown', unlock);
-          document.removeEventListener('touchstart', unlock);
-        };
-        document.addEventListener('pointerdown', unlock);
-        document.addEventListener('keydown', unlock);
-        document.addEventListener('touchstart', unlock, {passive:true});
+      playPromise.then(function(){
+        clearMusicUnlock();
+        setMusicUI(true);
+      }).catch(function(){
+        setMusicUI(false);
+        if(!fromUnlock) bindMusicUnlock();
       });
+    } else {
+      setMusicUI(!bgMusic.paused);
     }
   }
+
   if(bgMusic){
     bgMusic.volume = 0.4;
+    bgMusic.addEventListener('play', function(){ setMusicUI(true); });
+    bgMusic.addEventListener('pause', function(){
+      if(!musicUserPaused) setMusicUI(false);
+    });
+    if(musicToggle){
+      musicToggle.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(!bgMusic.paused){
+          musicUserPaused = true;
+          clearMusicUnlock();
+          bgMusic.pause();
+          setMusicUI(false);
+        } else {
+          musicUserPaused = false;
+          tryPlayMusic(true);
+        }
+      });
+    }
     tryPlayMusic();
   }
 
