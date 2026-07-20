@@ -323,6 +323,9 @@ body.menu-open #cursorSparks{visibility:hidden}
   animation:loaderLogoIn .75s var(--ease) forwards .05s;
   filter:brightness(.42) contrast(1.05) saturate(.85) drop-shadow(0 0 28px rgba(242,201,76,.25));
   pointer-events:none;
+  /* Hide bottom wordmark: Combat & Fitness / Built for Combat */
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 62%, transparent 78%);
+  mask-image:linear-gradient(to bottom, #000 0%, #000 62%, transparent 78%);
 }
 @keyframes loaderLogoIn{to{opacity:.55;transform:scale(1)}}
 .loader-content{
@@ -2772,10 +2775,28 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     var bolts = [];
+    var rain = [];
     var flash = 0;
     var nextBolt = 180;
     var start = null;
     var running = true;
+    var rainCount = Math.min(70, Math.floor(W / 14));
+
+    function seedRain(){
+      rain = [];
+      for(var i = 0; i < rainCount; i++){
+        rain.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          len: 6 + Math.random() * 12,
+          speed: 3.2 + Math.random() * 5.5,
+          drift: 0.4 + Math.random() * 0.9,
+          alpha: 0.12 + Math.random() * 0.28,
+          thick: 0.6 + Math.random() * 0.9
+        });
+      }
+    }
+    seedRain();
 
     function makeBolt(fromLeft){
       var pts = [];
@@ -2863,7 +2884,27 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
         flash *= 0.88;
       }
 
+      /* soft gold light-rain */
       ctx.globalCompositeOperation = 'lighter';
+      var rainBoost = 1 + flash * 1.4;
+      for(var r = 0; r < rain.length; r++){
+        var drop = rain[r];
+        drop.y += drop.speed * (running ? 1 : 0.6);
+        drop.x += drop.drift;
+        if(drop.y > H + 20){
+          drop.y = -20 - Math.random() * 40;
+          drop.x = Math.random() * W;
+        }
+        if(drop.x > W + 10) drop.x = -10;
+        var ra = drop.alpha * rainBoost;
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255,230,150,' + Math.min(0.55, ra) + ')';
+        ctx.lineWidth = drop.thick;
+        ctx.moveTo(drop.x, drop.y);
+        ctx.lineTo(drop.x + drop.drift * 2.2, drop.y + drop.len);
+        ctx.stroke();
+      }
+
       var alive = 0;
       for(var b = 0; b < bolts.length; b++){
         var bolt = bolts[b];
