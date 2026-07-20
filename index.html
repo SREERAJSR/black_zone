@@ -916,6 +916,7 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 
 <div class="grain"></div>
 <canvas id="siteSparks" aria-hidden="true"></canvas>
+<audio id="bgMusic" src="Born%20to%20Raise%20Hell%20-%20The%20Digital%20Cowboy%20(mp3cut.net).mp3" preload="auto" loop playsinline></audio>
 
 <!-- Nav -->
 <header id="header">
@@ -1817,8 +1818,33 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 
   // Loader burst removed — keep sparks for hero / site only
 
+  /* ---- Background music (autoplay + unlock on first gesture if blocked) ---- */
+  var bgMusic = document.getElementById('bgMusic');
+  function tryPlayMusic(){
+    if(!bgMusic || !bgMusic.paused) return;
+    var playPromise = bgMusic.play();
+    if(playPromise && typeof playPromise.then === 'function'){
+      playPromise.catch(function(){
+        var unlock = function(){
+          bgMusic.play().catch(function(){});
+          document.removeEventListener('pointerdown', unlock);
+          document.removeEventListener('keydown', unlock);
+          document.removeEventListener('touchstart', unlock);
+        };
+        document.addEventListener('pointerdown', unlock);
+        document.addEventListener('keydown', unlock);
+        document.addEventListener('touchstart', unlock, {passive:true});
+      });
+    }
+  }
+  if(bgMusic){
+    bgMusic.volume = 0.4;
+    tryPlayMusic();
+  }
+
   /* ---- Preloader ---- */
   window.addEventListener('load', function(){
+    tryPlayMusic();
     setTimeout(function(){
       var l = document.getElementById('loader');
       l.classList.add('done');
