@@ -293,16 +293,57 @@ body.menu-open #cursorSparks{visibility:hidden}
   position:absolute;inset:0;width:100%;height:100%;
   pointer-events:none;z-index:0;
 }
+.loader-sky{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -5%, rgba(242,201,76,.14), transparent 58%),
+    radial-gradient(ellipse 50% 40% at 18% 20%, rgba(255,220,120,.06), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 82% 18%, rgba(255,220,120,.06), transparent 60%);
+  opacity:.85;
+}
 .loader-evo{
   position:relative;z-index:1;
+  width:min(560px,94vw);
+  display:flex;flex-direction:column;align-items:center;
+}
+.loader-stage{
+  position:relative;
+  width:100%;
+  display:grid;
+  place-items:center;
+}
+.loader-logo{
   width:min(520px,92vw);
-  display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+  max-height:min(78vh,640px);
+  height:auto;
+  display:block;
+  margin:0 auto;
+  opacity:0;
+  transform:scale(.94);
+  animation:loaderLogoIn .75s var(--ease) forwards .05s;
+  filter:brightness(.42) contrast(1.05) saturate(.85) drop-shadow(0 0 28px rgba(242,201,76,.25));
+  pointer-events:none;
+}
+@keyframes loaderLogoIn{to{opacity:.55;transform:scale(1)}}
+.loader-content{
+  position:absolute;
+  left:50%;
+  top:58%;
+  transform:translate(-50%,-50%);
+  width:min(460px,92%);
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.85rem;
+  padding:1rem .75rem 1.1rem;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.72) 0%, rgba(0,0,0,.42) 50%, transparent 78%);
 }
 .loader-figures{
   display:flex;align-items:flex-end;justify-content:center;
-  gap:clamp(.55rem,3vw,1.4rem);
+  gap:clamp(.45rem,2.5vw,1.2rem);
   width:100%;
-  min-height:170px;
+  min-height:130px;
 }
 .loader-fig{
   flex:1;max-width:140px;
@@ -395,13 +436,6 @@ body.menu-open #cursorSparks{visibility:hidden}
 }
 .loader-tag em{font-style:normal;color:#fff;transition:color .35s ease}
 .loader.is-gold .loader-tag em{color:var(--gold-bright)}
-.loader-brand{
-  font-family:'Anton',sans-serif;text-transform:uppercase;
-  letter-spacing:.22em;font-size:clamp(1.15rem,4vw,1.55rem);
-  color:var(--gold-bright);line-height:1;
-  opacity:0;animation:fadeIn .55s ease forwards .45s;z-index:1;
-  text-shadow:0 0 24px rgba(242,201,76,.35);
-}
 @keyframes fadeIn{to{opacity:1}}
 .spark-canvas{
   position:absolute;inset:-28%;width:156%;height:156%;
@@ -1434,9 +1468,11 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
   .hero-cta .btn{flex:1}
   .hero h1{font-size:clamp(2.3rem,11vw,3.4rem)}
   .hero-logo{width:min(88vw,320px)}
-  .loader-figures{min-height:130px;gap:.4rem}
-  .loader-fig svg,.loader-fig img{max-height:118px}
-  .loader-fig[data-stage="1"] img{max-height:150px;transform:scale(1.4)}
+  .loader-figures{min-height:110px;gap:.35rem}
+  .loader-fig svg,.loader-fig img{max-height:100px}
+  .loader-fig[data-stage="1"] img{max-height:130px;transform:scale(1.35)}
+  .loader-logo{width:min(420px,94vw);max-height:min(70vh,520px)}
+  .loader-content{top:60%;width:min(400px,94%);gap:.65rem;padding:.75rem .5rem}
   .loader-tag{letter-spacing:.18em;font-size:.58rem}
 }
 
@@ -1457,29 +1493,33 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
 <!-- Preloader -->
 <div class="loader" id="loader" aria-busy="true" aria-label="Loading">
   <canvas class="loader-sparks" id="loaderSparks" aria-hidden="true"></canvas>
+  <div class="loader-sky" aria-hidden="true"></div>
   <div class="loader-evo">
-    <div class="loader-figures" aria-hidden="true">
-      <!-- Put your images in assets/loader/ with these exact names -->
-      <div class="loader-fig" data-stage="0">
-        <img src="assets/loader/start.png" alt="" width="140" height="150" />
-        <span class="loader-fig-label">Day One</span>
-      </div>
-      <div class="loader-fig" data-stage="1">
-        <img src="assets/loader/fit.png" alt="" width="140" height="150" />
-        <span class="loader-fig-label">Locked In</span>
-      </div>
-      <div class="loader-fig" data-stage="2">
-        <img src="assets/loader/strong.png" alt="" width="140" height="150" />
-        <span class="loader-fig-label">Beast Mode</span>
+    <div class="loader-stage">
+      <img class="loader-logo" src="logo.png" alt="BCF Blackzone" width="520" height="520" />
+      <div class="loader-content">
+        <div class="loader-figures" aria-hidden="true">
+          <div class="loader-fig" data-stage="0">
+            <img src="assets/loader/start.png" alt="" width="140" height="150" />
+            <span class="loader-fig-label">Day One</span>
+          </div>
+          <div class="loader-fig" data-stage="1">
+            <img src="assets/loader/fit.png" alt="" width="140" height="150" />
+            <span class="loader-fig-label">Locked In</span>
+          </div>
+          <div class="loader-fig" data-stage="2">
+            <img src="assets/loader/strong.png" alt="" width="140" height="150" />
+            <span class="loader-fig-label">Beast Mode</span>
+          </div>
+        </div>
+        <div class="loader-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="loader-bar-seg is-white" data-seg="0"></span>
+          <span class="loader-bar-seg is-gold" data-seg="1"></span>
+          <span class="loader-bar-seg is-gold" data-seg="2"></span>
+        </div>
+        <div class="loader-tag"><em>Warning</em> : A stronger you is loading</div>
       </div>
     </div>
-    <div class="loader-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-      <span class="loader-bar-seg is-white" data-seg="0"></span>
-      <span class="loader-bar-seg is-gold" data-seg="1"></span>
-      <span class="loader-bar-seg is-gold" data-seg="2"></span>
-    </div>
-    <div class="loader-tag"><em>Warning</em> : A stronger you is loading</div>
-    <div class="loader-brand">Blackzone</div>
   </div>
 </div>
 
@@ -2717,10 +2757,10 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
 
   // Loader burst removed — keep sparks for hero / site only
 
-  /* ---- Loader edge sparkles (top / left / right / bottom) ---- */
-  function runLoaderEdgeSparks(canvas, duration){
+  /* ---- Loader sky lightning (until loader ends) ---- */
+  function runLoaderSkyLightning(canvas, duration){
     if(!canvas || reduce) return;
-    duration = duration || 2200;
+    duration = duration || 4800;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var W = window.innerWidth;
     var H = window.innerHeight;
@@ -2730,112 +2770,130 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
     canvas.style.height = H + 'px';
     var ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var colors = ['#F2C94C', '#FFD76A', '#FFE08A', '#D4A537', '#FFF3C4', '#E8B84A', '#FFEE99'];
-    var parts = [];
 
-    function spawnEdge(side, n, delay){
-      for(var i = 0; i < n; i++){
-        var x, y, vx, vy;
-        var spread = 0.35 + Math.random() * 0.9;
-        if(side === 'top'){
-          x = W * (0.08 + Math.random() * 0.84);
-          y = -4 - Math.random() * 20;
-          vx = (Math.random() - 0.5) * 1.4;
-          vy = 1.2 + Math.random() * 4.2 * spread;
-        } else if(side === 'bottom'){
-          x = W * (0.08 + Math.random() * 0.84);
-          y = H + 4 + Math.random() * 20;
-          vx = (Math.random() - 0.5) * 1.4;
-          vy = -(1.2 + Math.random() * 4.2 * spread);
-        } else if(side === 'left'){
-          x = -4 - Math.random() * 20;
-          y = H * (0.1 + Math.random() * 0.8);
-          vx = 1.2 + Math.random() * 4.2 * spread;
-          vy = (Math.random() - 0.5) * 1.6;
-        } else {
-          x = W + 4 + Math.random() * 20;
-          y = H * (0.1 + Math.random() * 0.8);
-          vx = -(1.2 + Math.random() * 4.2 * spread);
-          vy = (Math.random() - 0.5) * 1.6;
+    var bolts = [];
+    var flash = 0;
+    var nextBolt = 180;
+    var start = null;
+    var running = true;
+
+    function makeBolt(fromLeft){
+      var pts = [];
+      var forks = [];
+      var x = fromLeft ? W * (0.05 + Math.random() * 0.22) : W * (0.73 + Math.random() * 0.22);
+      var y = -10 - Math.random() * 20;
+      var targetX = W * (0.35 + Math.random() * 0.3);
+      var targetY = H * (0.35 + Math.random() * 0.25);
+      var steps = 10 + ((Math.random() * 6) | 0);
+      pts.push({ x: x, y: y });
+      for(var i = 1; i <= steps; i++){
+        var t = i / steps;
+        var nx = x + (targetX - x) * t + (Math.random() - 0.5) * (28 + t * 40);
+        var ny = y + (targetY - y) * t + (Math.random() - 0.5) * 18;
+        pts.push({ x: nx, y: ny });
+        if(i > 3 && Math.random() < 0.28){
+          var fork = [];
+          var fx = nx, fy = ny;
+          var flen = 3 + ((Math.random() * 3) | 0);
+          for(var f = 0; f < flen; f++){
+            fx += (fromLeft ? 1 : -1) * (8 + Math.random() * 18);
+            fy += 10 + Math.random() * 22;
+            fork.push({ x: fx, y: fy });
+          }
+          forks.push({ start: i, path: fork });
         }
-        var glitter = Math.random() < 0.45;
-        parts.push({
-          x: x, y: y, vx: vx, vy: vy,
-          life: 0.7 + Math.random() * 1.1,
-          age: -delay - Math.random() * 0.35,
-          size: glitter ? (0.6 + Math.random() * 1.6) : (1.4 + Math.random() * 3.4),
-          color: colors[(Math.random() * colors.length) | 0],
-          glitter: glitter,
-          tw: Math.random() * Math.PI * 2
-        });
       }
+      return {
+        pts: pts,
+        forks: forks,
+        life: 0,
+        maxLife: 0.18 + Math.random() * 0.22,
+        width: 1.2 + Math.random() * 2.2,
+        bright: 0.7 + Math.random() * 0.3
+      };
     }
 
-    var batch = Math.floor((W + H) / 18);
-    ['top','bottom','left','right'].forEach(function(side, idx){
-      spawnEdge(side, batch, idx * 0.05);
-      spawnEdge(side, Math.floor(batch * 0.55), 0.22 + idx * 0.04);
-      spawnEdge(side, Math.floor(batch * 0.35), 0.48 + idx * 0.03);
-    });
+    function drawPath(path, width, alpha){
+      if(!path || path.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(path[0].x, path[0].y);
+      for(var i = 1; i < path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+      ctx.strokeStyle = 'rgba(255,244,200,' + alpha + ')';
+      ctx.lineWidth = width;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(242,201,76,.95)';
+      ctx.shadowBlur = 18;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(path[0].x, path[0].y);
+      for(var j = 1; j < path.length; j++) ctx.lineTo(path[j].x, path[j].y);
+      ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.95) + ')';
+      ctx.lineWidth = Math.max(0.6, width * 0.35);
+      ctx.shadowBlur = 6;
+      ctx.stroke();
+    }
 
-    var start = null;
     function frame(ts){
       if(!start) start = ts;
       var t = ts - start;
+      var loaderEl = document.getElementById('loader');
+      if((loaderEl && loaderEl.classList.contains('done')) || t >= duration){
+        running = false;
+      }
+
+      if(running && t >= nextBolt){
+        var fromLeft = Math.random() < 0.5;
+        bolts.push(makeBolt(fromLeft));
+        if(Math.random() < 0.45) bolts.push(makeBolt(!fromLeft));
+        flash = Math.max(flash, 0.55 + Math.random() * 0.45);
+        nextBolt = t + 420 + Math.random() * 780;
+      }
+
       ctx.clearRect(0, 0, W, H);
+
+      /* ambient sky wash */
+      if(flash > 0.01){
+        var g = ctx.createRadialGradient(W * 0.5, 0, 0, W * 0.5, 0, H * 0.85);
+        g.addColorStop(0, 'rgba(255,236,170,' + (flash * 0.28) + ')');
+        g.addColorStop(0.45, 'rgba(242,201,76,' + (flash * 0.1) + ')');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+        flash *= 0.88;
+      }
+
       ctx.globalCompositeOperation = 'lighter';
       var alive = 0;
-      for(var j = 0; j < parts.length; j++){
-        var p = parts[j];
-        p.age += 0.016;
-        if(p.age < 0){ alive++; continue; }
-        var k = p.age / p.life;
+      for(var b = 0; b < bolts.length; b++){
+        var bolt = bolts[b];
+        bolt.life += 0.016;
+        var k = bolt.life / bolt.maxLife;
         if(k >= 1) continue;
         alive++;
-        p.tw += 0.18;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.992;
-        p.vy *= 0.992;
-        var pulse = 0.75 + 0.25 * Math.sin(p.tw);
-        var alpha = (1 - k) * (1 - k) * pulse;
-        var s = p.size * (1 - k * 0.4) * pulse;
-        ctx.beginPath();
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = alpha;
-        ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
-        ctx.fill();
-        if(p.glitter){
-          ctx.beginPath();
-          ctx.fillStyle = '#FFF8E0';
-          ctx.globalAlpha = alpha * 0.85;
-          ctx.arc(p.x, p.y, s * 0.35, 0, Math.PI * 2);
-          ctx.fill();
-          /* tiny sparkle cross */
-          ctx.globalAlpha = alpha * 0.55;
-          ctx.strokeStyle = '#FFE08A';
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(p.x - s * 1.8, p.y);
-          ctx.lineTo(p.x + s * 1.8, p.y);
-          ctx.moveTo(p.x, p.y - s * 1.8);
-          ctx.lineTo(p.x, p.y + s * 1.8);
-          ctx.stroke();
-        } else if(k < 0.4){
-          ctx.beginPath();
-          ctx.strokeStyle = p.color;
-          ctx.globalAlpha = alpha * 0.5;
-          ctx.lineWidth = Math.max(0.5, s * 0.4);
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x - p.vx * 2.2, p.y - p.vy * 2.2);
-          ctx.stroke();
+        var alpha = bolt.bright * (k < 0.25 ? k / 0.25 : 1 - (k - 0.25) / 0.75);
+        alpha = Math.max(0, alpha);
+        drawPath(bolt.pts, bolt.width, alpha);
+        for(var f = 0; f < bolt.forks.length; f++){
+          var fork = bolt.forks[f];
+          var full = [bolt.pts[fork.start]].concat(fork.path);
+          drawPath(full, bolt.width * 0.55, alpha * 0.75);
         }
       }
-      ctx.globalAlpha = 1;
+      if(bolts.length > 8){
+        bolts = bolts.filter(function(bt){ return bt.life / bt.maxLife < 1; });
+      }
+      ctx.shadowBlur = 0;
       ctx.globalCompositeOperation = 'source-over';
-      if(alive > 0 && t < duration + 500) requestAnimationFrame(frame);
+
+      if(running || alive > 0 || flash > 0.02) requestAnimationFrame(frame);
       else ctx.clearRect(0, 0, W, H);
     }
+
+    /* opening flash */
+    bolts.push(makeBolt(true));
+    bolts.push(makeBolt(false));
+    flash = 0.75;
     requestAnimationFrame(frame);
   }
 
@@ -2920,7 +2978,7 @@ body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
         setTimeout(function(){ activateStage(i); }, delays[i]);
       });
       var loaderSparks = document.getElementById('loaderSparks');
-      if(loaderSparks) runLoaderEdgeSparks(loaderSparks, 4200);
+      if(loaderSparks) runLoaderSkyLightning(loaderSparks, 4800);
     } else {
       stages.forEach(function(i){ activateStage(i); });
     }
