@@ -63,8 +63,8 @@ body{
   body,body *{
     cursor:url("assets/cursors/dumbbell.png") 16 16, auto !important;
   }
-  a,button,.btn,.burger,.transform-nav,.nav-cta,.music-toggle,
-  a *,button *,.btn *,.burger *,.transform-nav *,.nav-cta *,.music-toggle *,
+  a,button,.btn,.burger,.transform-nav,.nav-cta,.sfx-toggle,
+  a *,button *,.btn *,.burger *,.transform-nav *,.nav-cta *,.sfx-toggle *,
   input,select,textarea,label[for],
   [data-link],[data-link] *,
   .card a,.reviews-cta,.map-actions a,.hours-card a{
@@ -163,21 +163,23 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- Nav ---------- */
 header{
-  position:fixed;top:.55rem;left:50%;right:auto;z-index:200;
-  width:min(1180px, calc(100% - 1.4rem));
-  transform:translateX(-50%);
+  position:fixed;top:.55rem;left:.7rem;right:.7rem;z-index:200;
+  width:auto;
+  max-width:1180px;
+  margin:0 auto;
   display:flex;align-items:center;justify-content:space-between;
   padding:.7rem clamp(1rem,3vw,1.8rem);
   background:transparent;
   border:none;
   border-radius:22px;
-  overflow:hidden;
-  transition:padding .4s var(--ease), width .4s var(--ease), top .4s var(--ease);
+  /* no transform / overflow — those trap the mobile menu inside the bar */
+  transition:padding .4s var(--ease), top .4s var(--ease);
 }
 /* iOS-level liquid glass — clear enough that black page shows through */
 header .nav-glass{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   border-radius:inherit;
+  overflow:hidden;
   background:rgba(255,255,255,.012);
   backdrop-filter:blur(32px) saturate(140%);
   -webkit-backdrop-filter:blur(32px) saturate(140%);
@@ -889,8 +891,8 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
 .foot-credit a{color:var(--gold);transition:color .3s}
 .foot-credit a:hover{color:var(--gold-bright)}
 
-/* ---------- Music toggle ---------- */
-.music-toggle{
+/* ---------- SFX toggle ---------- */
+.sfx-toggle{
   position:fixed;z-index:320;
   right:max(1rem, env(safe-area-inset-right));
   bottom:max(1.1rem, env(safe-area-inset-bottom));
@@ -905,54 +907,39 @@ footer{background:#000;border-top:1px solid var(--line);padding:3.4rem 0 2rem}
   transition:transform .35s var(--ease),border-color .35s,box-shadow .35s,opacity .4s;
   opacity:0;transform:translateY(14px);pointer-events:none;
 }
-body.ready .music-toggle{opacity:1;transform:none;pointer-events:auto}
-.music-toggle:hover{
+body.ready .sfx-toggle{opacity:1;transform:none;pointer-events:auto}
+.sfx-toggle:hover{
   border-color:rgba(242,201,76,.65);
   transform:translateY(-3px);
   box-shadow:0 18px 44px -14px rgba(0,0,0,.9),0 0 36px -10px rgba(242,201,76,.45);
 }
-.music-toggle:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
-.music-toggle.is-paused{
+.sfx-toggle:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
+.sfx-toggle.is-off{
   border-color:rgba(155,146,128,.35);
   box-shadow:0 14px 40px -16px rgba(0,0,0,.85);
 }
-.music-eq{
+.sfx-ico{
   width:36px;height:36px;flex:none;
-  display:flex;align-items:flex-end;justify-content:center;gap:3px;
-  padding:8px 7px;
+  display:grid;place-items:center;
   border:1px solid var(--line);color:var(--gold);
   clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
   background:rgba(212,165,55,.06);
 }
-.music-eq i{
-  display:block;width:2.5px;background:currentColor;border-radius:1px;
-  transform-origin:bottom;height:40%;
-  animation:eqPulse 0.9s ease-in-out infinite;
-}
-.music-eq i:nth-child(1){animation-delay:0s;height:35%}
-.music-eq i:nth-child(2){animation-delay:.15s;height:70%}
-.music-eq i:nth-child(3){animation-delay:.3s;height:50%}
-.music-eq i:nth-child(4){animation-delay:.45s;height:85%}
-@keyframes eqPulse{
-  0%,100%{transform:scaleY(.45);opacity:.55}
-  50%{transform:scaleY(1);opacity:1}
-}
-.music-toggle.is-paused .music-eq{color:var(--muted);background:rgba(255,255,255,.03)}
-.music-toggle.is-paused .music-eq i{animation:none;transform:scaleY(.35);opacity:.4}
-.music-meta{display:flex;flex-direction:column;align-items:flex-start;gap:.12rem;line-height:1.1;min-width:3.6rem}
-.music-k{
+.sfx-ico svg{width:18px;height:18px;display:block}
+.sfx-toggle.is-off .sfx-ico{color:var(--muted);background:rgba(255,255,255,.03)}
+.sfx-meta{display:flex;flex-direction:column;align-items:flex-start;gap:.12rem;line-height:1.1;min-width:3.6rem}
+.sfx-k{
   font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.22em;
   font-size:.58rem;color:var(--muted);
 }
-.music-v{
+.sfx-v{
   font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;
   font-size:.78rem;font-weight:600;color:var(--gold-bright);
 }
-.music-toggle.is-paused .music-v{color:var(--silver)}
-body.menu-open .music-toggle{opacity:0;pointer-events:none;visibility:hidden}
+.sfx-toggle.is-off .sfx-v{color:var(--silver)}
+body.menu-open .sfx-toggle{opacity:0;pointer-events:none;visibility:hidden}
 @media (prefers-reduced-motion:reduce){
-  .music-eq i{animation:none!important;transform:scaleY(.7);opacity:.85}
-  .music-toggle,.music-toggle:hover{transition:none;transform:none}
+  .sfx-toggle,.sfx-toggle:hover{transition:none;transform:none}
 }
 
 /* ---------- Responsive ---------- */
@@ -972,8 +959,12 @@ body.menu-open .music-toggle{opacity:0;pointer-events:none;visibility:hidden}
     padding:max(5.5rem, env(safe-area-inset-top) + 4.5rem) 1.5rem max(2rem, env(safe-area-inset-bottom) + 1rem);
     margin:0;box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;
     list-style:none;
+    visibility:visible;opacity:1;pointer-events:auto;
   }
-  nav.open .nav-links a{font-size:clamp(1.35rem,6vw,1.75rem);font-family:'Anton';position:relative;z-index:1;flex:none}
+  nav.open .nav-links a{
+    font-size:clamp(1.35rem,6vw,1.75rem);font-family:'Anton';
+    position:relative;z-index:1;flex:none;color:var(--bone);
+  }
   body.menu-open{
     overflow:hidden;
     touch-action:none;
@@ -988,9 +979,18 @@ body.menu-open .music-toggle{opacity:0;pointer-events:none;visibility:hidden}
   header{z-index:410}
   header{
     top:.4rem;
-    width:calc(100% - 1rem);
+    left:.5rem;right:.5rem;
+    width:auto;
+    max-width:none;
     border-radius:18px;
     padding:.55rem .85rem;
+  }
+  /* Keep glass bar visible above menu; don’t clip the overlay */
+  body.menu-open header{
+    overflow:visible;
+  }
+  body.menu-open header .nav-glass{
+    opacity:.35;
   }
   .hero-inner{grid-template-columns:1fr;gap:1.2rem;padding-top:6.5rem;text-align:center}
   .hero-sub{margin-left:auto;margin-right:auto}
@@ -1035,12 +1035,14 @@ body.menu-open .music-toggle{opacity:0;pointer-events:none;visibility:hidden}
 
 <div class="grain"></div>
 <canvas id="siteSparks" aria-hidden="true"></canvas>
-<audio id="bgMusic" src="Born%20to%20Raise%20Hell%20-%20The%20Digital%20Cowboy%20(mp3cut.net).mp3" preload="auto" loop playsinline></audio>
-<button type="button" class="music-toggle is-paused" id="musicToggle" aria-label="Play music" aria-pressed="false">
-  <span class="music-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-  <span class="music-meta">
-    <span class="music-k">Soundtrack</span>
-    <span class="music-v" id="musicLabel">Paused</span>
+<audio id="punchSfx" src="assets/sounds/punch.mp3" preload="auto" playsinline></audio>
+<button type="button" class="sfx-toggle" id="sfxToggle" aria-label="Disable sound effects" aria-pressed="true">
+  <span class="sfx-ico" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+  </span>
+  <span class="sfx-meta">
+    <span class="sfx-k">Punch SFX</span>
+    <span class="sfx-v" id="sfxLabel">On</span>
   </span>
 </button>
 
@@ -1945,87 +1947,58 @@ body.menu-open .music-toggle{opacity:0;pointer-events:none;visibility:hidden}
 
   // Loader burst removed — keep sparks for hero / site only
 
-  /* ---- Background music (autoplay + pause control) ---- */
-  var bgMusic = document.getElementById('bgMusic');
-  var musicToggle = document.getElementById('musicToggle');
-  var musicLabel = document.getElementById('musicLabel');
-  var musicUserPaused = false;
-  var musicUnlockBound = false;
+  /* ---- Punch SFX (toggle + play on button clicks) ---- */
+  var punchSfx = document.getElementById('punchSfx');
+  var sfxToggle = document.getElementById('sfxToggle');
+  var sfxLabel = document.getElementById('sfxLabel');
+  var sfxEnabled = true;
+  try{
+    var savedSfx = localStorage.getItem('bcf-sfx');
+    if(savedSfx === 'off') sfxEnabled = false;
+  } catch(err){}
 
-  function setMusicUI(playing){
-    if(!musicToggle) return;
-    musicToggle.classList.toggle('is-paused', !playing);
-    musicToggle.classList.toggle('is-playing', playing);
-    musicToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
-    musicToggle.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
-    if(musicLabel) musicLabel.textContent = playing ? 'Playing' : 'Paused';
+  function setSfxUI(on){
+    if(!sfxToggle) return;
+    sfxToggle.classList.toggle('is-off', !on);
+    sfxToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    sfxToggle.setAttribute('aria-label', on ? 'Disable sound effects' : 'Enable sound effects');
+    if(sfxLabel) sfxLabel.textContent = on ? 'On' : 'Off';
   }
 
-  function clearMusicUnlock(){
-    if(!musicUnlockBound) return;
-    document.removeEventListener('pointerdown', unlockMusic);
-    document.removeEventListener('keydown', unlockMusic);
-    document.removeEventListener('touchstart', unlockMusic);
-    musicUnlockBound = false;
+  function playPunch(){
+    if(!sfxEnabled || !punchSfx) return;
+    try{
+      var src = punchSfx.currentSrc || punchSfx.getAttribute('src');
+      if(!src) return;
+      var shot = new Audio(src);
+      shot.volume = 0.55;
+      var p = shot.play();
+      if(p && typeof p.catch === 'function') p.catch(function(){});
+    } catch(err){}
   }
 
-  function unlockMusic(e){
-    if(musicUserPaused) return;
-    if(e && e.target && musicToggle && (e.target === musicToggle || musicToggle.contains(e.target))) return;
-    tryPlayMusic(true);
-  }
+  setSfxUI(sfxEnabled);
+  if(punchSfx) punchSfx.volume = 0.55;
 
-  function bindMusicUnlock(){
-    if(musicUnlockBound || musicUserPaused) return;
-    musicUnlockBound = true;
-    document.addEventListener('pointerdown', unlockMusic);
-    document.addEventListener('keydown', unlockMusic);
-    document.addEventListener('touchstart', unlockMusic, {passive:true});
-  }
-
-  function tryPlayMusic(fromUnlock){
-    if(!bgMusic || musicUserPaused) return;
-    if(!bgMusic.paused){ setMusicUI(true); return; }
-    var playPromise = bgMusic.play();
-    if(playPromise && typeof playPromise.then === 'function'){
-      playPromise.then(function(){
-        clearMusicUnlock();
-        setMusicUI(true);
-      }).catch(function(){
-        setMusicUI(false);
-        if(!fromUnlock) bindMusicUnlock();
-      });
-    } else {
-      setMusicUI(!bgMusic.paused);
-    }
-  }
-
-  if(bgMusic){
-    bgMusic.volume = 0.4;
-    bgMusic.addEventListener('play', function(){ setMusicUI(true); });
-    bgMusic.addEventListener('pause', function(){
-      if(!musicUserPaused) setMusicUI(false);
+  if(sfxToggle){
+    sfxToggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      sfxEnabled = !sfxEnabled;
+      setSfxUI(sfxEnabled);
+      try{ localStorage.setItem('bcf-sfx', sfxEnabled ? 'on' : 'off'); } catch(err){}
+      if(sfxEnabled) playPunch();
     });
-    if(musicToggle){
-      musicToggle.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(!bgMusic.paused){
-          musicUserPaused = true;
-          clearMusicUnlock();
-          bgMusic.pause();
-          setMusicUI(false);
-        } else {
-          musicUserPaused = false;
-          tryPlayMusic(true);
-        }
-      });
-    }
-    tryPlayMusic();
   }
+
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('a[href]');
+    if(!t) return;
+    if(t.id === 'sfxToggle' || (sfxToggle && sfxToggle.contains(t))) return;
+    playPunch();
+  }, true);
 
   /* ---- Preloader ---- */
   window.addEventListener('load', function(){
-    tryPlayMusic();
     setTimeout(function(){
       var l = document.getElementById('loader');
       l.classList.add('done');
